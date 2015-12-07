@@ -1,9 +1,11 @@
 import numpy as np
+import matplotlib.image as mpimg
 from skimage.segmentation import slic
 from sklearn.feature_extraction import image
 from skimage import exposure
 from skimage.feature import hog
-
+from skimage.feature import greycomatrix, greycoprops
+from skimage import color
 
 # @input 
 #      img: original image
@@ -36,9 +38,9 @@ def getSuperPixellocation(superpixels):
 def getSuperPixelSize(superpixels):
 	size = []
 	for i in xrange(0,np.max(superpixels)+1):
-        indices = np.where(superpixels == i)
+		indices = np.where(superpixels == i)
         size.append(indices[0].shape)
-    return np.array(size)
+	return np.array(size)
 
 # @input 
 #      superpixels: 2D array segmentation 
@@ -51,7 +53,7 @@ def getSuperPixelMeanColor(superpixels, image):
     for i in xrange(0,numSuperpixels):
         indices = np.where(superpixels==i)
         color = image[indices]
-        mean_color.append([ np.mean(color[:,:,0]]), np.mean(color[:,:,1]]), np.mean(color[:,:,2]])])
+        mean_color.append([ np.mean(color[:,:,0]), np.mean(color[:,:,1]), np.mean(color[:,:,2])])
     return np.array(mean_color)
 
 
@@ -101,5 +103,19 @@ def getSuperPixelLabel(superpixels, label_image, thres=0.5):
     labelSuperpixel = np.array( labelAverage > thres)
     return np.array(labelSuperpixel)
 
-
-
+# @input 
+#      superpixels: 2D array segmentation 
+#      image: 3D array nxmx3 pixels color original image
+# @output
+#      mean_color: 2D array nx2 texture (dissimilarity, correlation) of all superpixels
+def getSuperPixelTexture(superpixels, image):
+    texture = []
+    numSuperpixels = np.max(superpixels)+1
+    greyImage = np.around(color.rgb2gray(image) * 255,0)
+    for i in xrange(0,numSuperpixels):
+    	indices = np.where(superpixels == i)
+        glcm = greycomatrix([greyImage[indices]], [5], [0], 256, symmetric=True, normed=True)
+        dissimilarity = greycoprops(glcm, 'dissimilarity')[0, 0]
+        correlation = greycoprops(glcm, 'correlation')[0, 0]
+        texture.append([dissimilarity, correlation])
+	return np.array(texture)
