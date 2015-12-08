@@ -1,4 +1,3 @@
-import superpixel as sp
 import feature_extraction as fe
 from skimage.segmentation import slic
 from skimage.segmentation import mark_boundaries
