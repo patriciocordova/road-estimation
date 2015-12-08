@@ -102,8 +102,6 @@ for i in xrange(0,num_images):
 	sys.stdout.write('\r')
 	sys.stdout.write(image_filenames[i] + " " +label_image_filenames[i] + '\nprogress %2.2f%%' %(100.0*i/num_images))
 	sys.stdout.flush()
-	if i > 10:
-		break
 
 scipy.io.savemat("train_data", {'train_data':train_data, 'valid_data':valid_data, 'train_labels':train_labels, 'valid_labels':valid_labels, 'file_labels':file_labels, 'image_filenames':image_filenames, 'label_image_filenames':label_image_filenames,'valid_pixels_labels':valid_pixels_labels, ''' 'valid_files':valid_files,'valid_files_count':valid_files_count, ''' 'valid_superpixels':valid_superpixels,'test_files_count':test_files_count, ''' 'validationOriginalImage':validationOriginalImage, ''' 'train_superpixels':train_superpixels}, oned_as='column')
 scipy.io.savemat("test_data",{'test_data':test_data,'test_label':test_labels},oned_as='column')
