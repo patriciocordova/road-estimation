@@ -22,7 +22,7 @@ def getSuperpixels(img, n_segments, compactness):
 #      superpixels: 2D array segmentation 
 # @output
 #      superpixel_location: 2D array nx2 center location of all superpixels
-def getSuperPixellocation(superpixels):
+def getSuperPixelLocation(superpixels):
     superpixel_location = []  
     for i in xrange(0,np.max(superpixels)+1):
         indices = np.where(superpixels == i)
@@ -36,11 +36,11 @@ def getSuperPixellocation(superpixels):
 # @output
 #      size: 1D array superpixels' sizes
 def getSuperPixelSize(superpixels):
-	size = []
-	for i in xrange(0,np.max(superpixels)+1):
-		indices = np.where(superpixels == i)
+    size = []
+    for i in xrange(0,np.max(superpixels)+1):
+        indices = np.where(superpixels == i)
         size.append(indices[0].shape)
-	return np.array(size)
+    return np.array(size)
 
 # @input 
 #      superpixels: 2D array segmentation 
@@ -53,9 +53,8 @@ def getSuperPixelMeanColor(superpixels, image):
     for i in xrange(0,numSuperpixels):
         indices = np.where(superpixels==i)
         color = image[indices]
-        mean_color.append([ np.mean(color[:,:,0]), np.mean(color[:,:,1]), np.mean(color[:,:,2])])
+        mean_color.append([ np.mean(color[:,0]), np.mean(color[:,1]), np.mean(color[:,2])])
     return np.array(mean_color)
-
 
 # @input 
 #      superpixels: 2D array segmentation 
@@ -70,10 +69,8 @@ def getSuperPixelOrientedHistogram(superpixels, image):
     hog_image_rescaled = exposure.rescale_intensity(hog_image, in_range=(0, 0.02))
     for i in xrange(0,numSuperpixels):
     	indices = np.where(superpixels==i)
-        gradient = np.mean(hog_image_rescaled[indices])
+        gradient = [np.mean(hog_image_rescaled[indices])]
         gradients.append(gradient)
-
-    #showPlots(newIm, numSuperpixels, superpixels)
     return np.array(gradients)
 
 # @input 
@@ -110,12 +107,12 @@ def getSuperPixelLabel(superpixels, label_image, thres=0.5):
 #      mean_color: 2D array nx2 texture (dissimilarity, correlation) of all superpixels
 def getSuperPixelTexture(superpixels, image):
     texture = []
-    numSuperpixels = np.max(superpixels)+1
-    greyImage = np.around(color.rgb2gray(image) * 255,0)
+    numSuperpixels = np.max(superpixels) + 1
+    greyImage = np.around(color.rgb2gray(image) * 255, 0)
     for i in xrange(0,numSuperpixels):
     	indices = np.where(superpixels == i)
         glcm = greycomatrix([greyImage[indices]], [5], [0], 256, symmetric=True, normed=True)
         dissimilarity = greycoprops(glcm, 'dissimilarity')[0, 0]
         correlation = greycoprops(glcm, 'correlation')[0, 0]
         texture.append([dissimilarity, correlation])
-	return np.array(texture)
+    return np.array(texture)
