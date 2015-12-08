@@ -24,7 +24,7 @@ def getSuperpixels(img, n_segments, compactness):
 #      superpixel_location: 2D array nx2 center location of all superpixels
 def getSuperPixelLocation(superpixels):
     superpixel_location = []  
-    for i in xrange(0,np.max(superpixels)+1):
+    for i in np.unique(superpixels):
         indices = np.where(superpixels == i)
         x = np.mean(indices[0])
         y = np.mean(indices[1])
@@ -37,7 +37,7 @@ def getSuperPixelLocation(superpixels):
 #      size: 1D array superpixels' sizes
 def getSuperPixelSize(superpixels):
     size = []
-    for i in xrange(0,np.max(superpixels)+1):
+    for i in np.unique(superpixels):
         indices = np.where(superpixels == i)
         size.append(indices[0].shape)
     return np.array(size)
@@ -49,8 +49,7 @@ def getSuperPixelSize(superpixels):
 #      mean_color: 2D array nx3 mean color of all superpixels
 def getSuperPixelMeanColor(superpixels, image):
     mean_color = []
-    numSuperpixels = np.max(superpixels)+1
-    for i in xrange(0,numSuperpixels):
+    for i in np.unique(superpixels):
         indices = np.where(superpixels==i)
         color = image[indices]
         mean_color.append([ np.mean(color[:,0]), np.mean(color[:,1]), np.mean(color[:,2])])
@@ -64,10 +63,9 @@ def getSuperPixelMeanColor(superpixels, image):
 def getSuperPixelOrientedHistogram(superpixels, image):
     grayImage = color.rgb2gray(image)
     gradients = []
-    numSuperpixels = np.max(superpixels)+1
     fd, hog_image = hog(grayImage, orientations=8, pixels_per_cell=(16, 16), cells_per_block=(1, 1), visualise=True)
     hog_image_rescaled = exposure.rescale_intensity(hog_image, in_range=(0, 0.02))
-    for i in xrange(0,numSuperpixels):
+    for i in np.unique(superpixels):
     	indices = np.where(superpixels==i)
         gradient = [np.mean(hog_image_rescaled[indices])]
         gradients.append(gradient)
@@ -89,9 +87,8 @@ def getPixelLabel(label_image):
 #      labelSuperpixel: 1D Array label per super pixel (only 1 or 0)
 def getSuperPixelLabel(superpixels, label_image, thres=0.5):
     labelAverage = []
-    numSuperpixels = np.max(superpixels)+1
     label_pixel = label_image[:,:,2]
-    for i in xrange(0,numSuperpixels):
+    for i in np.unique(superpixels):
         indices = np.where(superpixels==i)
         labels = label_pixel[indices]
         protionTrue = 1.0*np.sum(labels)/len(labels)

@@ -67,7 +67,7 @@ class Feature:
     def getFeaturesVectors(self):
         return self.featureVectors
 
-    def getSuperPixelLabels(self):
+    def getSuperpixelLabels(self):
         return self.superpixel_labels
 
     def getImage(self):
